@@ -25,7 +25,7 @@ void setback_cr0(unsigned int val);
 static int add_syscall(void);
 static int remove_syscall(void);
 
-static int sys_mycall(void);
+static int sys_mycall(struct pt_regs *regs);
 
 /*
  * 设置cr0寄存器的第16位为0
@@ -58,10 +58,13 @@ void setback_cr0(unsigned int val)
 /*
  * 自己编写的系统调用函数
  */
-static int sys_mycall(void)
+static int sys_mycall(struct pt_regs *regs)
 {
     printk("My syscall is added successfully!!!\n");
     pr_info("the process is\"%s\"(pid %i)\n",current->comm, current->pid);
+
+    // 数传递顺序为：rdi，rsi，rdx，r10，r8，r9
+    pr_info("arg: %lx, %lx, %lx\n", regs->di, regs->si, regs->dx);
     return 0;
 }
 
